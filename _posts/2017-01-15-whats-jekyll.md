@@ -1,6 +1,6 @@
 ---
 layout: post
-title: What's Jekyll?
+title: CVE-XXXX-XXXX 
 tags: [Demo, Jekyll]
 comment: false
 ---

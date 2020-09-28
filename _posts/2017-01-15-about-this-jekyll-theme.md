@@ -1,6 +1,6 @@
 ---
 layout: post
-title: About this Jekyll theme
+title: CVE-XXXX-XXXX 
 tags: [Demo, Jekyll]
 author: Heiswayi Nrird
 comment: true

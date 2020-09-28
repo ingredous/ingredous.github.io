@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Example content
+title: CVE-XXXX-XXXX 
 tags: [Demo, Example Content]
 comment: true
 ---

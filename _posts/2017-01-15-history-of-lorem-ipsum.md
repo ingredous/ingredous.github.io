@@ -1,6 +1,6 @@
 ---
 layout: post
-title: History of Lorem Ipsum
+title: CVE-XXXX-XXXX 
 tags: [Demo, Lorem Ipsum]
 comment: true
 ---
