@@ -1,7 +1,7 @@
 ---
 layout: post
 title: CVE-2019-14228 
-tags: [Demo, Jekyll]
+tags: [CVE-Writeup]
 author: Maxim @ Ingredous Labs
 comment: true
 ---
@@ -109,5 +109,5 @@ So essentially with a Self-XSS and some creative thinking we were able to takeov
 
 This was a great experience, and I've learned a lot. Remember when you have one piece of the puzzle, there are always ways to be able to leverage it into something bigger & greater. What normally would be treated as an informational bug, is able to be leveraged into something that can takeover the application.
 
-Best regards,
+Best regards,<br>
 Maxim
