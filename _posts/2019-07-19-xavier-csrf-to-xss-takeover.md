@@ -35,7 +35,7 @@ In order to upgrade a user's privileges, an Admin will need to browse to the Man
 
 One last piece remains and that is the Self-XSS. With the CSRF an attacker is able to leverage the Self-XSS into being remotely exploitable in the form of Reflected XSS. As an attacker is able to execute Javascript in the context of the Victim's browser, they are now able to bypass the Same Origin Policy (SOP) which therefore would allow the attacker to bypass the CSRF protection found on the endpoint which is responsible for promoting a user's privileges by including specially crafted Javascript found in the Proof of Concept section below. 
 
-Upon the Javascript being executed in the context of the Victim Admin's browser, it will create a new account for the attacker and promote it to Administrator which is the highest privilege offered by the application thus allowing the attacker to effectively takeover the application by chaining Self-XSS + CSRF. 
+Upon the Javascript being executed in the context of the Victim Admin's browser, it will create a new account for the attacker and promote it to Administrator which is the highest privilege offered by the application thus allowing the attacker to effectively takeover the application by chaining together Self-XSS + CSRF. 
 
 
 # Proof of Concept
