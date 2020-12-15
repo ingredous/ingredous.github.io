@@ -1,0 +1,25 @@
+---
+layout: post
+title: BigProf-Software Online Invoicing System SQL Injection 
+tags: [CVE-Writeup, SQLi]
+author: Ingredous Labs
+comment: true
+---
+
+```
+Affected Software Name: Online Invoicing System
+Affected Version: 2.9
+Vulnerability: SQL Injection
+CVE ID: Pending
+Pending
+```
+
+# Introduction
+
+
+# Exploitation Details
+
+
+
+# Proof of Concept
+
