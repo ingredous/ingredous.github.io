@@ -85,8 +85,6 @@ As mentioned before, the attacker is unaware of the group in which their user li
 However instead of relying on luck, the attacker can utilize Javascript to leverage the following proof of concept:
 
 ~~~javascript
-<html>
-<body>
 <script>
 var i;
 for (i = 3; i < 13; i++) {
@@ -94,15 +92,13 @@ for (i = 3; i < 13; i++) {
     x.setAttribute("src", "http://localhost/admin/pageTransferOwnership.php?sourceGroupID="+i+"&sourceMemberID=attacker&destinationGroupID=2&destinationMemberID=&moveMembers=1&beginTransfer=1");
 } 
 </script>
-</body>
-</html>
 ~~~
 
 The above Javascript snippet will result in 10 iterations (3 -> 13) with each iteration creating a new image tag which sets the value of the `sourceGroupId` parameter to the current value of `i` in the iteration. In the end this will result in 10 image tags with each having a different value for the `sourceGroupID` parameter. In this example, 3-13 was used however in a real life scenario an attacker can create as many iterations as they would like. The reason the range starts at 3 is because it was confirmed earlier that any new custom groups start at that index.
 
 Upon the application's administrator visiting this proof of concept, we can confirm that the requests are succesfully executing by taking a look at the browser's DevTools Network Tab:
 
-![Screenshot]({{ site.baseurl }}/images/posts/2020/ois-csrf/request.png)
+![Screenshot]({{ site.baseurl }}/images/posts/2020/ois-csrf/network.png)
 
 As such, an attacker is able to host a specially crafted proof of concept that upon being visted by the application's administrator will move the attacker's user into the Admin's user group therefore effectively granting the attacker administrative privileges and allowing them to takeover the application.
 
