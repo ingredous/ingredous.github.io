@@ -1,15 +1,18 @@
 ---
 layout: post
 title: CVE-2019-14228 
-tags: [CVE-Writeup]
+tags: [CVE-Writeup, XSS, CSRF, Chain]
 author: Ingredous Labs
 comment: true
 ---
 
-<h2>CVE-2019-14228</h2>
-~~~
+```
+Affected Software Name: Xavier PHP Login Script & Management Panel
+Affected Version: 3.0
+Vulnerability: Application Takeover via Self-XSS + CSRF Chain
+CVE ID: CVE-2019-14228
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14228
-~~~
+```
 
 # Introduction
 
