@@ -131,7 +131,7 @@ As shown above, the `thisOr()` function performs a simple ternary operation whic
 
 Since `thisOr()` was the final thing standing between succesful exploitation and not, we can now confirm that the application is indeed vulnerable to Stored Cross-Site Scripting as the application fails to sanitize the user-input for any HTML special characters which can lead to exploitation.
 
-With this in mind, an attacker is able to use Javascript to craft a payload that would bypass the Same Origin Policy therefore having the ability to grant themselves admin privileges. After sending the payload when creating a new user, an attacker will need to wait until the application's administrator browses to the user list which would therefore execute the payload.
+With this in mind, an attacker is able to use Javascript to craft a payload which would grant their account the highest privileges offered by the application. After sending the payload when creating a new user, an attacker will need to wait until the application's administrator browses to the user list which would therefore execute the payload. As the payload is executed in the context of the application, the Same Origin Policy is therefore bypassed and an attacker is able to effectively takeover the application.
 
 # Proof of Concept
 
