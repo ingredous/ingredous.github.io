@@ -18,7 +18,7 @@ Pending
 
 # Introduction
 
-Online Invoicing System offers a functionality which allows an administrator to move the records of members across groups. The endpoint which is responsible for moving members across groups lacks CSRF protection thus resulting in an attacker being able to escalate their privileges to Administrator and effectively taking over the application by having the application's admin browse to an attacker controlled page.
+Online Invoicing System offers a functionality which allows an administrator to move the records of members across groups. The endpoint (admin/pageTransferOwnership.php), which is responsible for moving members across groups lacks CSRF protection thus resulting in an attacker being able to escalate their privileges to Administrator and effectively taking over the application by having the application's admin browse to an attacker controlled page which contains the specially crafted proof of concept.
 
 # Exploitation Details
 
@@ -45,10 +45,6 @@ moveMembers = If 1 that means it will move the member and their data to the grou
 ~~~
 
 Something else you might notice in the request is that there appears to be no CSRF protecton such is in the form of a token (whether it be a parameter or cookie). Furthermore looking closely, we notice that the application does not utilize `Same Site Cookies` meaning this this endpoint is most likely vulnerable to Cross-Site Request Forgery.
-
-Lets quickly browse to the responsible code to confirm there are no hidden protections:
-
-
 
 However as shown in the request above in order for succesful exploitation to occur, an attacker would need to know the values of the following parameters:
 
