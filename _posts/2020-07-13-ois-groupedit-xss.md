@@ -18,7 +18,7 @@ Pending
 
 # Introduction
 
-Online Invoicing System fails to adequately sanitize fields for HTML characters upon an administrator creating a new group thus resulting in Stored Cross-Site Scripting. The caveat here is that an attacker would need administrative privileges in order to create the payload thus completely mitigating the privilege escalation impact as there is only one high privileged role. However it was discovered that the endpoint which is responsible for creating the group lacks CSRF protection as well meaning an attacker is able to chain these two vulnerabilities an remotely takeover the application.
+Online Invoicing System fails to adequately sanitize fields for HTML characters upon an administrator creating a new group thus resulting in Stored Cross-Site Scripting. The caveat here is that an attacker would need administrative privileges in order to create the payload thus completely mitigating the privilege escalation impact as there is only one high privileged role. However it was discovered that the endpoint which is responsible for creating the group lacks CSRF protection as well making it possible for an attacker to chain both of these vulnerabilities eventually resulting in taking over the application.
 
 # Exploitation Details
 
