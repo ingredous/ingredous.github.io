@@ -1,6 +1,6 @@
 ---
 layout: post
-title: BigProf-Software Online Invoicing System Application Takeover via CSRF
+title: BigProf-Software Online Invoicing System | CSRF -> Application Takeover
 tags: [CVE-Writeup, CSRF]
 author: Ingredous Labs
 comment: true
