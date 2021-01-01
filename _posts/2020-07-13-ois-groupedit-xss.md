@@ -12,8 +12,7 @@ Software Version: < 4.0
 Software Developer: https://bigprof.com/
 Link to Software: https://github.com/bigprof-software/online-invoicing-system
 Vulnerability: Application Takeover via chaining Stored XSS + CSRF
-CVE ID: Pending
-Pending
+CVE ID: CVE-2020-35677
 ```
 
 # Introduction
