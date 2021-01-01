@@ -1,6 +1,6 @@
 ---
 layout: post
-title: BigProf-Software Online Invoicing System | Stored XSS via CSRF in /admin/pageEditGroup.php -> Application Takeover
+title: CVE-2020-35677
 tags: [CVE-Writeup, XSS, CSRF, Chaining]
 author: Ingredous Labs
 comment: true

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: BigProf-Software Online Invoicing System | Stored XSS in /membership_signup.php -> Application Takeover
+title: CVE-2020-35676
 tags: [CVE-Writeup, XSS]
 author: Ingredous Labs
 comment: true

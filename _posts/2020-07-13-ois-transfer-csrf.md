@@ -1,6 +1,6 @@
 ---
 layout: post
-title: BigProf-Software Online Invoicing System | CSRF -> Application Takeover
+title: CVE-2020-35675
 tags: [CVE-Writeup, CSRF]
 author: Ingredous Labs
 comment: true
