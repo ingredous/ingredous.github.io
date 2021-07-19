@@ -1,7 +1,7 @@
 ---
 layout: post
 title: CVE-2020-35675
-tags: [CVE-Writeup, CSRF]
+tags: [CVE, PHP, CSRF]
 author: Ingredous Labs
 comment: true
 ---

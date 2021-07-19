@@ -1,7 +1,7 @@
 ---
 layout: post
 title: CVE-2019-14228 
-tags: [CVE-Writeup, XSS, CSRF, Chain]
+tags: [CVE, XSS, CSRF, PHP]
 author: Ingredous Labs
 comment: true
 ---

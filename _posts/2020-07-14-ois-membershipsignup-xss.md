@@ -1,7 +1,7 @@
 ---
 layout: post
 title: CVE-2020-35676
-tags: [CVE-Writeup, XSS]
+tags: [CVE, PHP, XSS]
 author: Ingredous Labs
 comment: true
 ---
