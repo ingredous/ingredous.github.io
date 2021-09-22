@@ -104,9 +104,9 @@ elmah.axd               [Status: 200, Size: 31290, Words: 1398, Lines: 529]
 
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/elmah.png)
 
-`elmah.axd` is essentially `trace.axd's` younger sibling. Unlike `trace.axd` which logs every request made to the application, `elmah.axd` only logs those which cause the application to throw an error. However just like `trace.axd`, `elmah.axd` logs the raw HTTP request which includes any session cookies. Both `trace.axd` and `elmah.axd` are used for debugging `ASP.NET` applications. The interesting thing behind both is that remote access is disabled by default meaning that to view the logs you would need to be connecting from the local IP Address. To read more about how security works within `elmah`, check out this great [resource](https://elmah.github.io/a/securing-error-log-pages/)
+`elmah.axd` is essentially `trace.axd's` younger sibling. Unlike `trace.axd` which logs every request made to the application, `elmah.axd` only logs those which cause the application to throw an error. However just like `trace.axd`, `elmah.axd` logs the raw HTTP request which includes any session cookies. Both `trace.axd` and `elmah.axd` are used for debugging `ASP.NET` applications. The interesting thing behind both is that remote access is disabled by default meaning that to view the logs you would need to be connecting from the local IP Address. To read more about how security works within `elmah`, check out this great [resource](https://elmah.github.io/a/securing-error-log-pages/).
 
-It was rather interesting that `elmah.axd` was discovered at this specific endpoint. The reason behind this can most likely be that this path was pointing to a different virtual directory in which its `web.config` was overwriting the parent `web.config` and thus allowing access to `elmah.axd`.
+It was rather interesting that `elmah.axd` was discovered at this specific endpoint as access was forbidden in several other directories. The reason behind this could be that this specific subdirectory may be a virtual directory which has its own `web.config` which was overriding the parent `web.config` that refused remote access to `elmah.axd`.  
 
 Session cookies found in the logs:
 
@@ -120,17 +120,20 @@ With the ability to obtain the session cookies, an attacker is now able to lever
 
 Being able to access the portal as an authenticated user, an attacker can now:
 
-- View Customer Information
+- Search & View Customer Information
+![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/customersearch.png)
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/customer-redacted.png)
 
 - Submit Invoices on behalf of Employees
-[screenshot]
+![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/invoices.png)
 
 - Access even a larger attack surface:
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/xss.png)
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/reporting.png)
 
 - and much more...
+
+Due to lack of time and the urgency of the authentication bypass, the engagement was halted and testing was shelved for later.
 
 ## Vendor Response
 
