@@ -106,6 +106,9 @@ elmah.axd               [Status: 200, Size: 31290, Words: 1398, Lines: 529]
 
 `elmah.axd` is essentially `trace.axd's` younger sibling. Unlike `trace.axd` which logs every request made to the application, `elmah.axd` only logs those which cause the application to throw an error. However just like `trace.axd`, `elmah.axd` logs the raw HTTP request which includes any session cookies. Both `trace.axd` and `elmah.axd` are used for debugging `ASP.NET` applications. The interesting thing behind both is that remote access is disabled by default meaning that to view the logs you would need to be connecting from the local IP Address. To read more about how security works within `elmah`, check out this great [resource](https://elmah.github.io/a/securing-error-log-pages/).
 
+A snippet which displays helpful debugging information about the application including the contents of the HTTP request:
+![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/debugging.png)
+
 It was rather interesting that `elmah.axd` was discovered at this specific endpoint as access was forbidden in several other directories. The reason behind this could be that this specific subdirectory may be a virtual directory which has its own `web.config` which was overriding the parent `web.config` that refused remote access to `elmah.axd`.  
 
 Session cookies found in the logs:
