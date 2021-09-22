@@ -29,9 +29,9 @@ Examples of such cues can include:
 
 - If the software is provided by a third party and by which third party. This is a bit more subjective, however if its a reputable vendor thats known to take security seriously (such as by managing a bug bounty program, etc) there's more confidence that it poses less risk compared to a smaller less reputable company.
 
-Using these points along with the workflow described earlier is how the vulnerability which will be described in the next section was discovered.
+Using these points along with the workflow described earlier is how the finding which will be described in the next section was discovered.
 
-## Vulnerability
+## Finding
 
 As mentioned, our organization runs a scan using Intrigue Core on a weekly basis. When reviewing the results, it was noticed that an asset that had an "Exposed Login Panel" was detected. While this by itself is not a vulnerability however citing the cues listed earlier, this did check off the two boxes (being exposed to the public + having a login panel). As this was discovered on a Friday afternoon right before a three day weekend, chasing down the team responsible for managing this application would have been out of the question. 
 
@@ -64,7 +64,7 @@ The Javascript was then dug through with the goal of finding any endpoints in or
 Furthermore what was more interesting is that a lot of these routes started with anchor `#` tags meaning they would not reach the server-side but rather intended for the frontend as the client-side router would pick it up.
 
 Here is an example of a few:
-```javascript
+```javascript=
 if (currentlocation.indexOf("workflowstep") > 0 || currentlocation.indexOf("etoken") > 0 || currentlocation.indexOf("statuscheck") > 0) {
   targetUrl = "#status/statuscheck?programId=" + AppState().data.vars["programId"];
 }
@@ -73,7 +73,7 @@ else {
 }
 ```
 
-Writing a quick Go script which would parse all the Javascript looking for matches that follwed the pattern `#anchor/path/` yielded the following results:
+Writing a quick Go script which would parse all the Javascript looking for matches that followed the pattern `#anchor/path/` yielded the following results:
 
 ```
 #status/statuscheck?programId=
@@ -109,7 +109,7 @@ It was rather interesting that `elmah.axd` was discovered at this specific the e
 
 Session cookies being found in the logs:
 
-![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/session-cookie.png)
+![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/sessioncookie.png)
 
 There may also be cases where the stack trace may contain sensitive information like customer info as shown below:
 
@@ -139,7 +139,7 @@ As the fix was minimal (adjusting the remote configuration settings of `elmah.ax
 
 The quick and swift response from the vendor is greatly appreciated and deserves praise.
 
-## Companies Affected
+## Affected Companies
 
 Once the vulnerability was identified, it was decided next to discover whether anymore of these instances were exposed to the internet. By employing a combination of passive techniques, it was found that there were several energy companies at risk.
 
