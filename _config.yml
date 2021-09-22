@@ -1,10 +1,10 @@
 # Site settings
 title: "Ingredous Labs"
 theme: textlog
-description: "Minimalist Jekyll theme for documentation site"
+description: "Research & Notes"
 baseurl: "" # required if used under gh-pages branch, else (under master branch) just leave empty/blank
 url: ""
-author: "John Doe"
+author: "maxim (m-q-t)"
 
 # Build settings
 kramdown:
