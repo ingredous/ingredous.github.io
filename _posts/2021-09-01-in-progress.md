@@ -109,7 +109,7 @@ elmah.axd               [Status: 200, Size: 31290, Words: 1398, Lines: 529]
 A snippet that displays helpful debugging information about the application including the contents of the HTTP request:
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/debugging.png)
 
-It was rather interesting that `elmah.axd` was discovered at this specific endpoint as access was forbidden in several other directories. The reason behind this could be that this specific subdirectory may be a virtual directory that has its own `web.config` which was overriding the parent `web.config` that refused remote access to `elmah.axd`.  
+It was rather interesting that `elmah.axd` was discovered at this specific endpoint as access was forbidden in several other directories. The most likely reason behind this could be that this specific subdirectory may be a virtual directory that has its own `web.config` which was overriding the parent `web.config` that refused remote access to `elmah.axd`.
 
 Session cookies found in the logs:
 
