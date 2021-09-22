@@ -23,6 +23,7 @@ Mentioned earlier, one of the challenges is developing a methodology to rank app
 To combat some of the points discussed above, my team has been experimenting with various workflows. One of the workflows that we have found that currently works best is using software to map out the attack surface and then using the human approach to quickly categorize the risk the application poses. To map out the public attack surface, we have been leveraging the power of the [Intrigue Core Engine](https://github.com/intrigueio/intrigue-core).  The Core Engine is a powerful beast as it will utilize different techniques to best map out the attack surface while also providing software fingerprints due in part to the robust application and service fingerprinting library known as [Intrigue Ident](https://github.com/intrigueio/intrigue-ident). Throughout soldifying this workflow we have discovered several cues which help us to quick categorize whether an application is worth further exploring or put it on the backburner.
 
 Examples of such cues can include:
+
 **Please keep in mind that all the cues described below are accounting for the fact that the application is exposed to the Internet. While it is true that internal applications possess a risk, an attacker would require access by other means most likely by leveraging some form of exploitation in an exposed asset thus increasing the complexity required to exploit internal applications.**
 
 - Whether or not the application is behind a login panel. If so, this may mean that the application possesses some form of information that requires an authorized party to view and at the very least has some form of attack surface with services talking to another one another (e.g DBMS, etc.)
@@ -57,14 +58,14 @@ With a different response returned, the page was examined more closely and it wa
 
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/sources.png)
 
-There were your typical third party dependencies such as `select.js` however there were more scripts which appeared to be proprietary to the application. Further examining these scripts it was revealed that the application's frontend is powered by [Knockout.js](https://knockoutjs.com/) which is a framework that promotes the Model-View-ViewModel pattern. 
+There were your typical third party dependencies such as `select.js` however there were more scripts which appeared to be proprietary to the application. Further examining these scripts it was revealed that the application's frontend is powered by [Knockout.js](https://knockoutjs.com/) which is a framework that promotes the `Model-View-ViewModel pattern`. 
 
 The Javascript was then dug through with the goal of finding any endpoints in order to yield a larger attack surface. Especially as it was seen that the application was frontend heavy there was hope that maybe a route can be found that would return information about a program. After further investigation, there were several variations of endpoints being invoked by the Javascript found. These included your typical AJAX calls, either directly or the route being passed to a function which would fire off the request.
 
 Furthermore what was more interesting is that a lot of these routes started with anchor `#` tags meaning they would not reach the server-side but rather intended for the frontend as the client-side router would pick it up.
 
 Here is an example of a few:
-```javascript=
+```js
 if (currentlocation.indexOf("workflowstep") > 0 || currentlocation.indexOf("etoken") > 0 || currentlocation.indexOf("statuscheck") > 0) {
   targetUrl = "#status/statuscheck?programId=" + AppState().data.vars["programId"];
 }
@@ -103,7 +104,7 @@ elmah.axd               [Status: 200, Size: 31290, Words: 1398, Lines: 529]
 
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/eecp/elmah.png)
 
-`elmah.axd` is essentially `trace.axd's` younger sibling. Unlike `trace.axd` which logs every request made to the application, `elmah.axd` only logs those which cause the application to throw an error. However just like `trace.axd`, `elmah.axd` logs the raw HTTP request which includes any session cookies. Both `trace.axd` and `elmah.axd` are used for debugging `ASP.NET` applications. The interesting thing behind both is that remote access is disabled by default meaning that in order to actually view the logs you would need to be connecting from the local IP Address. To read more about how security works within `elmah`, check out https://elmah.github.io/a/securing-error-log-pages/
+`elmah.axd` is essentially `trace.axd's` younger sibling. Unlike `trace.axd` which logs every request made to the application, `elmah.axd` only logs those which cause the application to throw an error. However just like `trace.axd`, `elmah.axd` logs the raw HTTP request which includes any session cookies. Both `trace.axd` and `elmah.axd` are used for debugging `ASP.NET` applications. The interesting thing behind both is that remote access is disabled by default meaning that in order to actually view the logs you would need to be connecting from the local IP Address. To read more about how security works within `elmah`, check out this great [resource](https://elmah.github.io/a/securing-error-log-pages/)
 
 It was rather interesting that `elmah.axd` was discovered at this specific the endpoint. The reason behind this can most likely be that this path was pointing to a different virtual directory in which its `web.config` was overwriting the parent `web.config` and thus allowing access to `elmah.axd`.
 
