@@ -6,7 +6,9 @@ author: Ingredous Labs
 comment: true
 ---
 
-While skimming through the book "A Guide To Chess Improvement" by Dan Heisman, a particular section caught my eye which was **"Hope Chess"**.  Heisman defines "Hope Chess' as the following:
+While skimming through the book "A Guide To Chess Improvement" by Dan Heisman, a particular section caught my eye which was **"Hope Chess"**.  
+
+Heisman defines "Hope Chess' as the following:
 
 ```
 - Making a move without analyzing whether you can safely meet any forcing reply.
