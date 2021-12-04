@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "Hope Bug Bounty"
+title: \"Hope Bug Bounty\"
 tags: [Personal]
 author: Ingredous Labs
 comment: true
 ---
 
-While skimming through the book "A Guide To Chess Improvement" by Dan Heisman, a particular section caught my eye and that was "Hope Chess".  Heisman defines "Hope Chess' fas the following:
+While skimming through the book "A Guide To Chess Improvement" by Dan Heisman, a particular section caught my eye which was **"Hope Chess"**.  Heisman defines "Hope Chess' fas the following:
 
 ```
 - Making a move without analyzing whether you can safely meet any forcing reply.
@@ -16,10 +16,10 @@ While skimming through the book "A Guide To Chess Improvement" by Dan Heisman, a
 
 This term struck a chord within me as it forced me to come to a realization that I've been treating bug bounty as essentially "Hope Bug Bounty". While bug bounty and chess are two entirely different subjects, they both share a lot of the same principles.
 
-Specifically what I mean by "Hope Bug Bounty" is where one fails to take the time and learn the inner-workings of the application and its respective developer's habits. Instead one finds themselves spraying and praying various payloads and trying several low-hanging fruit techniques before calling it a day and moving onto the next application. Rather than trying to grasp a proficient understanding of how a specific endpoint should behave, one just sees the parameters that may be reflected in the source or passed to a database. While in some scenarios this kind of approach works, however in the majority it tends to cause one to miss a vast amount of bugs.
+Specifically what I mean by "Hope Bug Bounty" is where one fails to take the time and learn the inner workings of the application and its respective developer's habits. Instead one finds themselves spraying and praying various payloads and trying several low-hanging fruit techniques before calling it a day and moving on to the next application. Rather than trying to grasp a proficient understanding of how a specific endpoint should behave, one just sees the parameters that may be reflected in the source or passed to a database. While in some scenarios this kind of approach works, however in the majority it tends to cause one to miss a vast amount of bugs.
 
 To conclude this post, I'll leave a paraphrased excerpt in which my close friend and mentor [Shpend K](https://twitter.com/shpendk) mentioned while we were discussing a similar topic:
 
-> One's goal when testing an application is to obtain a level of understanding of the how the application works to the point where they can essentially become a junior developer.
+> One's goal when testing an application is to obtain a level of understanding of how the application works to the point where they can essentially become a junior developer.
 
 Thanks for reading.
