@@ -1,6 +1,6 @@
 ---
 layout: post
-title: TOBETITLEDTOBETITLED
+title: 7-Peat - Hacking 7 Power Companies
 tags: [ASP.NET, Research]
 author: Ingredous Labs
 comment: true
@@ -12,7 +12,7 @@ This blog post will demonstrate how a low-hanging fruit discovered in a relative
 
 ## Motivation
 
-Working application security at a large organization I've witnessed several challenges that many organizations face. With hundreds or even thousands of applications, it becomes daunting to not only keep track of which applications are exposed on the internet (looking at you shadow it) but also ranking the applications in a way that will prioritize the ones warranting a pentest. Regarding the first point about internet exposure, this led to the birth of the Attack Surface Management (ASM) market. A new mantra has been adopted by several of these ASM companies which essentially is "What you can't see, can hurt you". 
+Working application security at a large organization I've witnessed several challenges that many organizations face. With hundreds or even thousands of applications, it becomes daunting to not only keep track of which applications are exposed on the internet (looking at you Shadow-It) but also ranking the applications in a way that will prioritize the ones warranting a pentest. Regarding the first point about internet exposure, this led to the birth of the Attack Surface Management (ASM) market. A new mantra has been adopted by several of these ASM companies which essentially is "What you can't see, can hurt you". 
 
 Furthermore, with the rapid advancement in DevSecOps processes and tools, more and more low-hanging fruits are caught and mitigated during the development life cycle. As such when developing in-house applications, you have the ability to see the DevSecOps processes which are implemented and make any alterations that you see fit. However this now completely changes when purchasing software from a third-party vendor. As you lack the visibility on how the security phase within the vendor's development lifecycle operates, you are only left with the choice of hoping it's done correctly, let alone if it's done at all. 
 
