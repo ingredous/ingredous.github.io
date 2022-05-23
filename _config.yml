@@ -1,6 +1,7 @@
 # Site settings
 title: "Ingredous Labs"
-theme: textlog
+# theme: textlog
+remote_theme: heiswayi/textlog
 description: "Research & Notes"
 baseurl: "" # required if used under gh-pages branch, else (under master branch) just leave empty/blank
 url: ""
