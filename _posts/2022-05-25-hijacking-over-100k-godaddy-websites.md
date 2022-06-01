@@ -2,7 +2,7 @@
 layout: post
 title: Hijacking Over 100k GoDaddy Websites 
 tags: [Research]
-author: Ingredous Labs
+author: mqt @ Ingredous Labs
 comment: true
 ---
 
