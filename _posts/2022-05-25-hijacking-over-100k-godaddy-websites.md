@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Hijacking Over 100k Websites 
+title: Hijacking Over 100k GoDaddy Websites 
 tags: [Research]
 author: Ingredous Labs
 comment: true
@@ -9,7 +9,7 @@ comment: true
 # Summary
 GoDaddy is a well-known domain registrar which also offers various complementary services such as hosting and website building. One service, in particular, is the [Website Builder](https://www.godaddy.com/en-uk/websites/website-builder) which allows anyone to build and publish a website regardless of their technical ability. As typical with these services, they allow custom domains to be configured with the website.
 
-Due to a misconfiguration, it was discovered that any domain hosting a website built using this service could be taken over. This required no prior knowledge about the victim nor any interaction, but rather publishing your website using the target’s domain name thus overwriting the settings as there was no validation performed.
+Due to a misconfiguration, it was discovered that any domain hosting a website built using this service could be taken over. This required no prior knowledge about the victim nor any interaction, but rather publishing your website using the target’s domain name thus overwriting the existing configuration as there was no validation performed.
 
 Using various historical DNS data sources, it was roughly estimated that over 100,000 websites were susceptible to this vulnerability.
 
@@ -67,6 +67,8 @@ When connecting a custom domain to the website builder, there will be a prompt t
 At this stage an attacker would input a domain that is already pointing to GoDaddy’s shared web hosting services. If you’re wondering how an attacker would know which domains point to this service, it’s fairly simple. An attacker could go through this flow using a legitimate domain and on the next prompt, GoDaddy will provide the IP Address for which the DNS Record needs to be set to:
 
 ![Screenshot]({{ site.baseurl }}/images/posts/2020/godaddy/godaddy-2.png)
+
+The attacker could repeat this flow a few times and eventually end up with a list of IP Addresses. This list could then be cross-referenced against various passive DNS resources to eventually end up with a catalog of domains.
 
 Finally, after clicking through a few confirmation prompts, the attacker can visit the victim’s domain and observe that instead of the victim’s website being served, it is in fact the attacker’s.
 
