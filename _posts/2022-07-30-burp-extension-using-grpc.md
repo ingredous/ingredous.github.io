@@ -7,7 +7,7 @@ comment: true
 ---
 
 ## Introduction
-Recently I worked on writing a Burp Extension which uses grpc to pass responses to external service that would then further analyze the information. The reason grpc was chosen for this task was due to both its interoperability with other languages and its high throughput. This blog post aims to provide a walkthrough of my experience writing this extension and some pitfalls which were encountered.
+Recently I worked on writing a Burp Extension which uses grpc to pass responses to an external service that would then further analyze the information. The reason grpc was chosen for this task was due to both its interoperability with other languages and its high throughput. This blog post aims to provide a walkthrough of my experience writing this extension and some pitfalls which were encountered.
 
 ## Scaffolding the Burp Extension
 To quickly scaffold a Burp Extension, it is highly recommended to use the following [Maven archetype](https://github.com/ise-spolansky/burp-extension-maven-archetype). 

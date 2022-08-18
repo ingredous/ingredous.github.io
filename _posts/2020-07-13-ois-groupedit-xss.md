@@ -2,7 +2,7 @@
 layout: post
 title: CVE-2020-35677
 tags: [CVE, XSS, CSRF, PHP]
-author: Ingredous Labs
+author: gogetit @ Ingredous Labs
 comment: true
 ---
 
