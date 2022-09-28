@@ -10,10 +10,8 @@ comment: true
 After reading `So Good They Can't Ignore You` by Cal Newport, I was enthralled by the topic of `Little Bets`.
 
 Little Bets are defined as:
-```
-bite-sized, carefully chosen projects that take no more than a few months, give you valuable feedback, and help you to determine your next steps.
-You don't need to commit to a project that will determine your work life for the next few years. Take on small projects and continuously adapt.
-```
+
+> bite-sized, carefully chosen projects that take no more than a few months, give you valuable feedback, and help you to determine your next steps. You don't need to commit to a project that will determine your work life for the next few years. Take on small projects and continuously adapt.
 
 [Source](https://deepstash.com/idea/60897/take-on-little-bets)
 
@@ -24,6 +22,7 @@ With that being said, I wanted to replicate the author's experience and as such 
 ## Notes
 
 After spending a few weeks studying the topic across different sources, I compiled my notes into an easily digestible Gitbook Notebook which can be found at:
+
 [https://mqt.gitbook.io/oauth-research/](https://mqt.gitbook.io/oauth-research/)
 
 The intended audience of the notebook is for everyone regardless if they're a developer or a pentester. The notes were designed in such a way that if you blank on a specific OAuth topic, you can quickly revisit the notes and read a high level overview. Furthermore included in the notes are several proof of concepts which demonstrate various vulnerabilities that could be found in an OAuth implementation.
