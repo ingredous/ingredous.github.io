@@ -254,7 +254,8 @@ sampleB = EcDsaSignature((sig2.r, sig2.s), msghash_2, pubkey, ecdsa.NIST256p)
 ```
 
 Note: If you may be wondering where the constant came from which defines the curve, it was defined in the `python-ecdsa` library:
-https://github.com/tlsfuzzer/python-ecdsa/blob/master/src/ecdsa/curves.py#L333
+
+[https://github.com/tlsfuzzer/python-ecdsa/blob/master/src/ecdsa/curves.py#L333](https://github.com/tlsfuzzer/python-ecdsa/blob/master/src/ecdsa/curves.py#L333)
 
 With both `sampleA` and `sampleB` objects instantiated, the `recover_nonce_reuse()` method can now be called:
 
