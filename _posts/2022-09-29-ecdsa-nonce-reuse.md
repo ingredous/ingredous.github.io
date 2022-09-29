@@ -278,8 +278,25 @@ msg = 'does this work'
 k = 12345 # nonce
 msghash = sha256(msg.encode()).digest()
 sig = recovered.privkey.sign(bytes_to_long(msghash), k)
-pubkey.verifies(msghash, sig)
+pubkey.verifies(bytes_to_long(msg_hash), sig)
+>>> True
+```
 
+Perfect the signature signed using the recovered private key is able to be verified with the derived public key.
 
+In the case of the web application, the attacker would now be able to mint a new JWT with modified claims and gain access to the application as a highly privileged user, e.g:
 
+```
+{
+	"username": "admin",
+	"email": "admin@localhost"
+}
+```
 
+### Conclusion
+
+A great way to end the blog post is by reiterating that this isn't a flaw within the ECDSA algorithm itself but rather a flawed implementation of it. In this scenario it occurred due to the developer attempting to roll their own crypto (as sometimes it may seem as simple as plugging variables into a formula). Typically by using tried and true dependencies, a developer is able to relieve the responsibility of correctly implementing the respective algorithm. However be note, even in the case where a trusted library such as one that's packaged with the programming language otherwise known as a standard library, can contain flaws. [In April it was discovered that Java suffered a critical vulnerability](https://www.cryptomathic.com/news-events/blog/explaining-the-java-ecdsa-critical-vulnerability) where its ECDSA signature verification algorithm was flawed thus allowing an attacker to trivially construct an ECDSA signature which would always be successfully validated. The reason this happened was due to the ECDSA code being rewritten for the Java 15 release. 
+
+To provide a quick TL;DR about this post for pentesters - in a black-box engagement, if the application is discovered to be using ECDSA as a signing algorithm, collect a sample of signatures and ensure they don't each start with the same pattern.
+
+Thanks for reading.
