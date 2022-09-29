@@ -8,7 +8,7 @@ comment: true
 
 ## Preface
 
-Disclaimer: The information presented in this blog post is not novel research, but rather a writeup demonstrating the attack. The goal of this post is to help developers and pentesters alike xyz to spot this flaw by providing both black-box and white-box examples based on a realistic scenario.
+Disclaimer: The information presented in this blog post is not novel research, but rather a writeup demonstrating the attack. The goal of this post is to help developers and pentesters alike to be aware of this vulnerability. Furthermore instructions are provided on how to help spot this flaw and leverage exploitation by using a realistic black-box scenario involving a web application.
 
 [ECDSA Nonce Reuse gained a lot of traction when researchers leveraged this technique to be able to bypass the code signing verification process on Sony's Playstation 3 Consoles.](https://youtu.be/84WI-jSgNMQ?t=330) As Sony was using the same static nonce value to sign the firmware, the researchers were able to extract the ECDSA Private Key and as such sign their own binaries thus allowing the binaries to be ran on the Playstation 3. Recently this technique has been getting a lot of attention due to the various digital currencies which employ ECDSA as the cryptographic algorithm.
 
