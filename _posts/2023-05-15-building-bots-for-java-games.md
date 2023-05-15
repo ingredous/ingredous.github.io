@@ -1,6 +1,6 @@
 ---
 layout: post
-title: BSides 2023 - Building Bots for Java Games - A Beginner's Guide
+title: BSides Prishtina 2023 - Building Bots for Java Games - A Beginner's Guide
 tags: [Research]
 author: mqt @ Ingredous Labs
 comment: true
@@ -20,4 +20,4 @@ In the summer of 2023, I had the opportunity to deliver a talk at BSides Prishti
 
 ## Extension
 
-As mentioned in the final slide of the talk, the topic of obfuscation was not covered during the presentation. However, to address this important aspect, I have prepared a follow-up blog post that delves into the practical demonstration of approaching an obfuscated client. You can find the blog post at the following link: [here](linkme)
+As mentioned in the final slide of the talk, the topic of obfuscation was not covered during the presentation. However, to address this important aspect, I have prepared a follow-up blog post that delves into the practical demonstration of approaching an obfuscated client. You can find the blog post at the following link: [Deobfuscating a Java Game Client]({{ site.baseurl }}/2023/05/15/deobfuscating-java-game-client/)

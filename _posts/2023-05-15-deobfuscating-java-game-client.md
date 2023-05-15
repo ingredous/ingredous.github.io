@@ -14,7 +14,7 @@ Obfuscation, in simple terms, involves intentionally making the code difficult f
 
 Therefore, the main objective of this blog post is to showcase various techniques that can be employed when faced with an obfuscated client. Additionally, it presents a practical case study that illustrates the application of these techniques in a real-world scenario.
 
-If you're interested in this topic, please check out the following blog post which links the slides and the video, as well as providing some additional context.
+If you're interested in this topic, please check out the following [blog post]({{ site.baseurl }}/2023/05/15/building-bots-for-java-games/) which links the slides and the video, as well as providing some additional context.
 
 # Tools
 
@@ -30,8 +30,7 @@ From my personal observations, it appears that a significant number of RSPS Clie
 
 Within the structure of an RSPS Client, it is highly probable to encounter a class known as `Client`, which serves as the core controller responsible for centralizing various functionalities. Embedded within this class are references to instances that would be of particular interest to bot developers, including references to the local player, NPCs, other players, and other interesting entities.
 
-Here is an example of the `Client` class belonging to a 317 Client:
-https://github.com/RomaniaClan/Elvarg/blob/master/Elvarg%20-%20Client/src/com/runescape/Client.java#L15459
+Here is an example of the `Client` class belonging to a 317 Client: [Client.java](https://github.com/RomaniaClan/Elvarg/blob/master/Elvarg%20-%20Client/src/com/runescape/Client.java#L15459)
 
 As such, the current goal is to locate the `Client` class in the obfuscated client.
 
@@ -43,14 +42,11 @@ This section will be divided into multiple smaller sections, each focusing on a 
 
 An effective analogy for comprehending the deobfuscation process is likening it to solving a puzzle. Initially, when you begin, it may appear that you have thousands of puzzle pieces with no clear indication of where each one fits. However, as you progressively assemble the puzzle, you start recognizing patterns that gradually make it easier to determine the correct placement of each piece. In essence, once you successfully identify the correct placement of a particular puzzle piece, it can serve as a valuable clue that offers insights into the whereabouts of the subsequent pieces.
 
-As mentioned earlier in the `Preface` section, the majority of RSPS Clients will follow the same boilerplate. As such, it makes sense to find an open-source client which matches the revision of the client you are trying to deobfuscate. In this blog post, we will be using the open-source old-school RSPS Client that can be found at the following Github repository:
-
-https://github.com/TagsRocks/nardah_client
+As mentioned earlier in the `Preface` section, the majority of RSPS Clients will follow the same boilerplate. As such, it makes sense to find an open-source client which matches the revision of the client you are trying to deobfuscate. In this blog post, we will be using the open-source old-school RSPS Client that can be found at the following [Github repository](https://github.com/TagsRocks/nardah_client).
 
 The next sections will assume you have already decompiled the client, I've found `CFR` to be an effective decompiler (linked in the `Tools` section above).
 
 **Note: A recent shift in the paradigm has introduced a two-stage structure for RSPS Game Clients. The initial stage, known as the launcher, is the component that users download. Its primary function is to validate whether the user has the latest game client installed. If not, it proceeds to download the most up-to-date client from the corresponding artifactory and saves it to disk. The second stage involves launching the game client itself (which the launcher does). In the upcoming section, our focus will be on the game client itself, rather than the launcher. Therefore, please make sure to locate the relevant client on your disk (typically found in the user's home folder).**
-
 
 ## Class Visualizer (Static)
 
@@ -252,7 +248,7 @@ To accomplish this, follow the steps outlined below:
 - Create a blank project in `IDEA`.
 - Open the `Project Settings` by clicking the Project Name in the explorer and hitting `F4` (or `File` -> `Project Structure`).
 - Click the `Libraries` tab towards the left.
-- Within the `Librarries` interface, click the `+` and add the client jar.
+- Within the `Libraries` interface, click the `+` and add the client jar.
 - Click `OK` towards the bottom right.
 
 If done correctly, expand the `External Libraries` drop-down in the explorer and the client jar should be there. You can then expand the respective packages in the client jar and observe the decompiled classes:
