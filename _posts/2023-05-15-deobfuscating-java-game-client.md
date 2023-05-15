@@ -114,7 +114,7 @@ Moreover, upon observing that type `P` inherits from `jW`, it reinforces the hyp
 
 In summary, utilizing `Class Visualizer` provides a valuable advantage in obtaining a comprehensive overview of the different types comprising the application and their interconnections, offering insights into how they interact with one another.
 
-## Leveraging Heuristics
+## Leveraging Heuristics (Static)
 
 This next sub-section will describe some heuristic techniques that can be used to help deobfuscate the client.
 
