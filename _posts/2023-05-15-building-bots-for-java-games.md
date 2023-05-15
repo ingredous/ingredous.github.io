@@ -1,6 +1,6 @@
 ---
 layout: post
-title: BSides 2023 - Building Bots for Java Games: A Beginner's Guide
+title: BSides 2023 - Building Bots for Java Games - A Beginner's Guide
 tags: [Research]
 author: mqt @ Ingredous Labs
 comment: true
