@@ -6,8 +6,6 @@ author: mqt @ Ingredous Labs
 comment: true
 ---
 
-# Tracing the KNET SEH Overflow (CVE-2005-0575)
-
 ## Preface
 
 Leveraging a buffer overflow to achieve successful exploitation is only half the battle, the other half is discovering the overflow in the first place. As such, the purpose of this blog post is to provide a walkthrough on discovering the overflow affecting [KNet Web Server 1.04b](https://www.techspot.com/downloads/569-knet.html) aka `CVE-2005-0575`.
