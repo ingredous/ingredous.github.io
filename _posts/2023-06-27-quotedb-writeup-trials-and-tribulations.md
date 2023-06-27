@@ -9,7 +9,7 @@ comment: true
 
 The point of this blog post is to provide a postmortem highlighting some of the mistakes which were encountered while solving the `QuoteDB` challenge which can be found in the following [Github Repo](https://github.com/bmdyy/quote_db).
 
-## Format String Vulnerability
+## Mistake #1 - Misunderstanding Format String Vulnerabilities
 
 The application includes a `get_quote` feature, which enables the client to input a quote index, triggering a response from the server with the corresponding quote. An initial call to the `get_quote()` function can be discovered at `main + 0xEF6`. A detailed examination of the function's disassembly reveals a call to `_snprintf()`:
 
@@ -54,9 +54,9 @@ main+0x15ae:
 
 Using the function signature above, the arguments can be identified:
 
-`0x015b4648` => destination buffer
-`0x800` => size of copy
-`0x00b80280` => format string pointer
+- `0x015b4648` => destination buffer
+- `0x800` => size of copy
+- `0x00b80280` => format string pointer
 
 Displaying the ASCII contents of the format string pointer shows the following:
 
@@ -125,8 +125,7 @@ snprintf(buffer, 0x800, "%s", quote_string_pointer)
 Also in case you're wondering why `snprintf()` was used (apart from it being part of the vulnerable challenge), instead of a function that's designed to copy strings such as `strcpy()/strncpy()` is most likely because:
 
 1. `snprintf()` will null-terminate the output string automatically. `strncpy()` however will not null terminate the string if the source string is greater than or equal to the number of characters to be copied.
-2. 
-3. `snprintf()` will not truncate the copy operation if a null byte is encountered in the source string (making this beneficial for an attacker as `0x00` will not be considered a bad character in this specific scenario.
+2. `snprintf()` will not truncate the copy operation if a null byte is encountered in the source string (making this beneficial for an attacker as `0x00` will not be considered a bad character in this specific scenario.
 
 ### Write-Primitive Rabbit Hole
 
@@ -353,7 +352,7 @@ As shown in the earlier section, when sending the contents of `%p %p %p %p %p %p
 0061fe6c  00000030
 ```
 
-After further review, my initial understanding of how the format string functions worked under-the-hood was wrong.
+After further review, my initial understanding of how the format string functions worked under-the-hood is wrong.
 
 The reason the contents of the format string specifier are seen on the stack in the second example is because it can be considered "residue" from the earlier `fgets()` call which initially takes the input via `stdin` and stores it in a buffer.
 
@@ -409,7 +408,7 @@ Each individual packet is handled by a separate thread, so by the time the `get_
 
 In summary, the ability to exploit a write primitive in a format string vulnerability depends on the method through which the format specifier is introduced into the respective format string function call.
 
-## Ignoring functionality due to seeing it is only reached when an error happens
+## Mistake #2 - Ignoring application functionality
 
 During the process of learning how the `QuoteDB` application behaves, it is discovered that is based on the opcode pattern where the packet contains a certain value that will influence how the application will behave next.
 
