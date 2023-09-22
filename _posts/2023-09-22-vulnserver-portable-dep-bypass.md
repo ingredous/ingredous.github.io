@@ -129,7 +129,7 @@ The great thing about an `IAT` belonging to a module without `ASLR`, like `essfu
 
 Here's a quick guide that illustrates the process:
 
-1. Open `essfunc.dll` in IDA Pro or any other disassembler of your choice. Once the binary analysis is complete, look under the `Imports` tab. Search for your desired function, and you should find an entry similar to:
+- Open `essfunc.dll` in IDA Pro or any other disassembler of your choice. Once the binary analysis is complete, look under the `Imports` tab. Search for your desired function, and you should find an entry similar to:
 
 ```text
 62507120		VirtualProtect	KERNEL32
@@ -137,7 +137,7 @@ Here's a quick guide that illustrates the process:
 
 The address `0x62507120` serves as the hardcoded pointer directing to the actual `VirtualProtect` address.
 
-2. Now, connect a debugger like WinDbg to `vulnserver.exe`. Use the following command to dereference the pointer and reveal the first few instructions at the address, along with the symbol name:
+- Now, connect a debugger like WinDbg to `vulnserver.exe`. Use the following command to dereference the pointer and reveal the first few instructions at the address, along with the symbol name
 
 ```text
 0:000> u poi(0x62507120)
@@ -718,7 +718,7 @@ ebx=00ecf228
 
 As shown above, the program will proceed to the address of the subsequent gadget in the sequence, maintaining the flow of the chain!
 
-### Back to overriding the first placeholder
+#### Back to overriding the first placeholder
 
 Having set `EBX` to point to the beginning of the `VirtualProtect` skeleton and adjusted the pointers to reference the addresses of gadgets that emulate specific behaviors, the next step is to replace the first `DWORD` in the skeleton with the `VirtualProtect` address. As discussed earlier, the address of `VirtualProtect` was obtained at runtime by accessing the `IAT`.
 
@@ -1145,7 +1145,7 @@ rop += struct.pack('<L', 0x625017c0) # mov ebp, eax ; call  [0x625070E8]
 
 Writeups on complex topics like this can be challenging to grasp without trying them out firsthand.
 
-The final `ROP` chain can be found at the following link:
-https://gist.github.com/m-q-t/4eb78075e708dc0ec51f93a96964ee9b
+The final `ROP` chain can be found in the following gist:
+[https://gist.github.com/m-q-t/4eb78075e708dc0ec51f93a96964ee9b](https://gist.github.com/m-q-t/4eb78075e708dc0ec51f93a96964ee9b)
 
 Thanks for reading.
